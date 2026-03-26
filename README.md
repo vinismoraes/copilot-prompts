@@ -102,9 +102,25 @@ git pull
 
 If you used the install script (symlinks), changes apply immediately. If you copied manually, re-run the copy commands.
 
-## Adding new prompts
+## Contributing
 
-1. Create a new `.instructions.md` or `.prompt.md` file in the appropriate folder
-2. Add YAML frontmatter with `applyTo` and `description`
-3. Commit and push
-4. Teammates pull and re-run install if needed
+To propose a new prompt or modify an existing one:
+
+1. Fork this repository
+2. Create a new `.instructions.md` or `.prompt.md` file in the appropriate folder (or edit an existing one)
+3. Include YAML frontmatter with `applyTo` and `description` fields:
+   ```yaml
+   ---
+   applyTo: "**/*.go"
+   description: Short description of what this instruction does
+   ---
+   ```
+4. Open a pull request with a clear description of the change
+
+### Guidelines
+
+- **Instructions** (`instructions/`): Always-on rules that activate based on file patterns. Use these for coding standards, security policies, and workflow conventions.
+- **Prompts** (`prompts/`): On-demand task templates invoked from the Copilot Chat panel. Use these for repeatable multi-step workflows.
+- **Scripts** (`scripts/`): Shell scripts referenced by instructions or prompts. Keep them portable across macOS and Linux.
+- Keep instruction files focused on a single concern — prefer multiple small files over one large file.
+- Test new prompts locally before submitting by copying them to your VS Code prompts directory.
