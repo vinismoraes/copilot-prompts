@@ -1,6 +1,37 @@
 # Copilot Prompts
 
-Custom VS Code Copilot instruction and prompt files for Go backend development in the League services repo.
+A curated set of VS Code Copilot instruction files and reusable prompts for Go backend development — covering coding standards, CI/CD, PR workflows, and multi-repo task management.
+
+## Quick start
+
+```bash
+git clone git@github.com:vinismoraes/copilot-prompts.git ~/GoProjects/copilot-prompts
+cd ~/GoProjects/copilot-prompts && ./scripts/install.sh
+```
+
+That's it. Restart VS Code and Copilot will start following the instructions automatically.
+
+## Why?
+
+Out of the box, Copilot doesn't know your team's conventions. It will generate code that compiles but doesn't match your style, skip linters, forget commit message formats, and push without asking.
+
+These instruction files fix that by giving Copilot persistent context about how you work:
+
+**Without instructions:**
+> You: "commit this"
+>
+> Copilot: runs `git commit -m "Updated the handler to fix the bug in the processing logic"` and pushes immediately
+
+**With instructions:**
+> You: "commit this"
+>
+> Copilot: "Here are the changes — ready to commit and push?"
+>
+> `fix request validation in handler`
+>
+> *(waits for confirmation, runs linters first, uses imperative mood, stays under 72 chars)*
+
+The same pattern applies across the board — PR creation, code reviews, diagram formatting, testing conventions, and more.
 
 ## What's inside
 
@@ -124,3 +155,7 @@ To propose a new prompt or modify an existing one:
 - **Scripts** (`scripts/`): Shell scripts referenced by instructions or prompts. Keep them portable across macOS and Linux.
 - Keep instruction files focused on a single concern — prefer multiple small files over one large file.
 - Test new prompts locally before submitting by copying them to your VS Code prompts directory.
+
+## License
+
+MIT — use it, fork it, adapt it to your own team's conventions.
