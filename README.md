@@ -19,7 +19,6 @@ Custom VS Code Copilot instruction and prompt files for Go backend development i
 | `git-commits.instructions.md` | `**` | One-line, imperative, lowercase commit messages under 72 chars |
 | `git-push.instructions.md` | `**` | Always ask for confirmation before committing or pushing |
 | `go-standards.instructions.md` | `**/*.go` | Go coding standards — formatting, testing, mocking, comments |
-| `league-security-policy.instructions.md` | `**` | HIPAA security guardrails — forbidden commands and file access |
 | `locale-ignore.instructions.md` | `src/el/**/*.go` | Add `// locale.Ignore` comments to non-user-facing strings |
 | `mcp-tools.instructions.md` | `**/mcp/**/*.go` | MCP tool development patterns for messaging and connected care |
 | `mirrord.instructions.md` | `**` | Running services locally with mirrord against remote envs |
