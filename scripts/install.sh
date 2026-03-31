@@ -53,7 +53,7 @@ done
 
 echo ""
 echo "Installing task scripts → $REPOS_ROOT"
-for f in "$REPO_DIR"/scripts/{new-task,add-repo,done-task}.sh; do
+for f in "$REPO_DIR"/scripts/{new-task,add-repo,done-task,quick-start-repo}.sh; do
   [[ -f "$f" ]] || continue
   name=$(basename "$f")
   target="$REPOS_ROOT/$name"

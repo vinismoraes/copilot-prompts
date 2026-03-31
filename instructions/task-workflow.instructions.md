@@ -53,3 +53,22 @@ Repos live under `$REPOS_ROOT/`. Common ones:
 - The `services` repo automatically gets `src/el` added as a second workspace root
 - Worktrees are created at `$REPOS_ROOT/worktrees/TICKET/`
 - Main clones at `$REPOS_ROOT/` are never modified
+
+## Quick starting a new repo
+
+If the task requires a brand-new repo that does not exist under `$REPOS_ROOT`:
+
+1. Ask for repo name and optional Go module path.
+2. Bootstrap the repo:
+
+```bash
+./quick-start-repo.sh REPO_NAME --module example.com/REPO_NAME
+```
+
+3. Start the task with that repo:
+
+```bash
+./new-task.sh TICKET-1234 REPO_NAME
+```
+
+This creates an initial `main` branch and commit, then creates the task worktree/branch and workspace.

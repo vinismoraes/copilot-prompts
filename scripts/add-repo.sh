@@ -30,6 +30,7 @@ fi
 for repo in $REPOS; do
   REPO_PATH="$REPOS_ROOT/$repo"
   WORKTREE_PATH="$TASK_DIR/$repo"
+  START_POINT=""
 
   if [[ ! -d "$REPO_PATH/.git" ]]; then
     echo "⚠️  Repo '$repo' not found at $REPO_PATH — skipping"
@@ -41,15 +42,25 @@ for repo in $REPOS; do
     continue
   fi
 
-  echo "→ Fetching latest for $repo..."
-  git -C "$REPO_PATH" fetch origin --quiet --prune
+  if git -C "$REPO_PATH" remote get-url origin >/dev/null 2>&1; then
+    echo "→ Fetching latest for $repo..."
+    git -C "$REPO_PATH" fetch origin --quiet --prune || true
+  fi
 
-  echo "→ Updating $repo local main..."
-  git -C "$REPO_PATH" update-ref refs/heads/main refs/remotes/origin/main 2>/dev/null || true
+  if git -C "$REPO_PATH" show-ref --verify --quiet refs/remotes/origin/main; then
+    START_POINT="origin/main"
+    echo "→ Updating $repo local main..."
+    git -C "$REPO_PATH" update-ref refs/heads/main refs/remotes/origin/main 2>/dev/null || true
+  elif git -C "$REPO_PATH" show-ref --verify --quiet refs/heads/main; then
+    START_POINT="main"
+  else
+    echo "⚠️  Repo '$repo' has no main branch — skipping"
+    continue
+  fi
 
   echo "→ Creating worktree for $repo..."
-  if git -C "$REPO_PATH" worktree add "$WORKTREE_PATH" -b "$TICKET" origin/main 2>/dev/null; then
-    echo "  ✓ Created branch $TICKET from origin/main"
+  if git -C "$REPO_PATH" worktree add "$WORKTREE_PATH" -b "$TICKET" "$START_POINT" 2>/dev/null; then
+    echo "  ✓ Created branch $TICKET from $START_POINT"
   elif git -C "$REPO_PATH" worktree add "$WORKTREE_PATH" "$TICKET" 2>/dev/null; then
     echo "  ✓ Checked out existing branch $TICKET"
   else

@@ -63,12 +63,14 @@ The same pattern applies across the board — PR creation, code reviews, diagram
 | File | Description |
 |---|---|
 | `mirrord.prompt.md` | Run mirrord to test a local app against a remote environment |
+| `quick-start-repo.prompt.md` | Bootstrap a new local Go repo and start a task workspace |
 
 ### Scripts
 
 | File | Description |
 |---|---|
 | `install.sh` | Symlinks prompts into VS Code and task scripts into `$REPOS_ROOT` |
+| `quick-start-repo.sh` | Creates a local Go repo scaffold (`main`, `go.mod`, `main.go`) |
 | `new-task.sh` | Start a new multi-repo task — creates worktrees, generates a `.code-workspace`, opens VS Code |
 | `add-repo.sh` | Add a repo to an existing task mid-flight |
 | `done-task.sh` | Clean up worktrees and workspace when a task is done |
