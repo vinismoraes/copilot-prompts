@@ -12,7 +12,7 @@ Use the CircleCI API with `$CIRCLE_TOKEN` (set in shell env) to inspect and mana
 1. Get pipelines for a branch:
 ```
 curl -s -H "Circle-Token: $CIRCLE_TOKEN" \
-  "https://circleci.com/api/v2/project/gh/EverlongProject/services/pipeline?branch=BRANCH"
+  "https://circleci.com/api/v2/project/gh/<owner>/<repo>/pipeline?branch=BRANCH"
 ```
 
 2. Get workflows for a pipeline:
@@ -30,7 +30,7 @@ curl -s -H "Circle-Token: $CIRCLE_TOKEN" \
 4. Get job step details (v1.1 API, basic auth):
 ```
 curl -s -u "$CIRCLE_TOKEN:" \
-  "https://circleci.com/api/v1.1/project/github/EverlongProject/services/JOB_NUMBER"
+  "https://circleci.com/api/v1.1/project/github/<owner>/<repo>/JOB_NUMBER"
 ```
 
 5. Fetch step output logs via `output_url` from step actions.

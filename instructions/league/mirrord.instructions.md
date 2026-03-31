@@ -23,13 +23,13 @@ MIRRORD_ROUTE=<your-value> ./run_with_mirrord.sh <app-name> <environment>
 ### Arguments
 
 - `<app-name>`: Name of the app under `src/el/apps/` (e.g. `messaging`, `api`, `benefits`)
-- `<environment>`: GCP environment (e.g. `test2-ca`, `test4-ca`). The `league-` prefix is added automatically
+- `<environment>`: target environment name used by your cluster and scripts
 
 ### MIRRORD_ROUTE
 
-- Set `MIRRORD_ROUTE` to a unique personal value (e.g. your name) to only route traffic with `X-League-Mirrord-Route=<your-value>` to your local process
+- Set `MIRRORD_ROUTE` to a unique personal value (e.g. your name) to only route traffic with your team's route header to your local process
 - This allows multiple people to use the same environment concurrently
-- Set `MIRRORD_ROUTE=` (empty) to route ALL traffic to your local process — coordinate in `#project-ai-testing-envs` first
+- Set `MIRRORD_ROUTE=` (empty) to route ALL traffic to your local process and coordinate with your team first
 
 ### Examples
 
@@ -55,9 +55,9 @@ Any directory under `src/el/apps/` — common ones: `messaging`, `api`, `benefit
 
 ## Common environments
 
-- `test2-ca` — Canadian test environment
-- `test4-ca` — Canadian test environment
-- Other test envs follow the pattern `test<N>-ca` or `test<N>-au`
+- `test2` — shared test environment example
+- `test4` — shared test environment example
+- Other environments follow your org naming conventions
 
 ---
 
@@ -74,17 +74,16 @@ MIRRORD_ROUTE="<your-name>" PRETTY_LOGS=1 make mirrord <aor|gc> <testX>
 
 - `PRETTY_LOGS=1` pipes output through a log formatter for readability
 - `<aor|gc>`: target app (`aor` or `agent-orchestrator`, `gc` or `guarded-conversation`)
-- `<testX>`: environment (e.g. `test2`, `test4`, `test2-ca`, `league-test2-ca`)
+- `<testX>`: environment (e.g. `test2`, `test4`, `staging`)
 
-### Testing with SDK Presenter (web app, league tenant)
+### Testing with SDK presenter (web app)
 
 When `make mirrord` starts, a **sticky header bar** appears at the top of the terminal with a link to the SDK Presenter web app. The environment and mirrord route are pre-populated in the URL.
 
-- URL format: `https://sdk-presenter.league.dev/?env=test2-ca&mirrord=<your-route>`
+- URL format: `https://<presenter-host>/?env=<env>&mirrord=<your-route>`
 - The URL is **shareable** — send it to others so they can interact with your local WIP changes
-- Log in with: `jjadmin@league.com` / `12345678`
 - Click the live chat button at the bottom right to interact with your local changes
-- Limitation: only works on the web app and for the `league` tenant
+- Limitation: this flow depends on your organization's presenter integration
 
 ### Testing with CLI chat
 

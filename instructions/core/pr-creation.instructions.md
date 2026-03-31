@@ -1,6 +1,6 @@
 ---
 applyTo: "**"
-description: Pull request creation standards — always create as draft, include Jira ticket
+description: Pull request creation standards — always create as draft, include issue tracker link when available
 ---
 
 # PR Creation
@@ -15,7 +15,7 @@ description: Pull request creation standards — always create as draft, include
 
 `[TICKET-123] Short description of change`
 
-- Branch name = Jira ticket number (e.g. `PCHAT-6802`)
+- If the branch name includes an issue key, use `[branch]` prefix in the title
 - Title uses `[branch]` prefix
 
 ## Body format
@@ -23,8 +23,8 @@ description: Pull request creation standards — always create as draft, include
 Follow the repo PR template (`.github/pull_request_template.md`):
 
 ```
-### JIRA Ticket Reference
-https://everlong.atlassian.net/browse/TICKET-123
+### Issue Tracker Reference
+https://tracker.example.com/browse/TICKET-123
 
 ### Description
 What was added/changed and why.
@@ -36,5 +36,5 @@ Blast radius (BR1–BR5) and mitigation plan if broad.
 Unit tests, integration tests, manual testing.
 ```
 
-- Always include the Jira ticket link
+- Include the issue tracker link when a ticket exists
 - Use `### Description`, not `## Summary`
