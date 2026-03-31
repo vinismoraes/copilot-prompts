@@ -1,6 +1,6 @@
 # Copilot Prompts
 
-A curated, generic-first set of VS Code Copilot instruction files and reusable prompts for backend development, with optional packs for org-specific workflows.
+A curated, generic-first set of VS Code Copilot instruction files and reusable prompts for backend development, with optional packs for organization-specific workflows.
 
 ## Quick start
 
@@ -38,9 +38,9 @@ The same pattern applies across the board — PR creation, code reviews, diagram
 | Folder | Type | Purpose |
 |---|---|---|
 | `instructions/core/` | `.instructions.md` | Generic always-on rules installed by default |
-| `instructions/league/` | `.instructions.md` | League-specific optional instruction pack |
+| `instructions/league/` | `.instructions.md` | Optional organization-specific instruction pack (example pack) |
 | `prompts/core/` | `.prompt.md` | Generic reusable task prompts installed by default |
-| `prompts/league/` | `.prompt.md` | League-specific optional prompts |
+| `prompts/league/` | `.prompt.md` | Optional organization-specific prompts (example pack) |
 | `scripts/` | `.sh` | Task workflow scripts (worktrees, install) + install script |
 
 ### Instructions
@@ -56,7 +56,7 @@ The same pattern applies across the board — PR creation, code reviews, diagram
 | `pre-commit-lint.instructions.md` | `**/*.go` | Run local linters before every commit |
 | `task-workflow.instructions.md` | `**` | Multi-repo worktree management for cross-repo tasks |
 
-### Optional league pack
+### Optional organization pack (league example)
 
 These files are available but not installed in the default core profile:
 
@@ -72,7 +72,7 @@ These files are available but not installed in the default core profile:
 | File | Description |
 |---|---|
 | `quick-start-repo.prompt.md` | Bootstrap a new local Go repo and start a task workspace |
-| `mirrord.prompt.md` | Run mirrord to test a local app against a remote environment (league profile) |
+| `mirrord.prompt.md` | Run mirrord to test a local app against a remote environment (optional profile) |
 
 ### Scripts
 
@@ -84,7 +84,7 @@ These files are available but not installed in the default core profile:
 | `add-repo.sh` | Add a repo to an existing task mid-flight |
 | `done-task.sh` | Clean up worktrees and workspace when a task is done |
 
-See the [multi-repo task workflow gist](https://gist.github.com/vinismoraes/e6ee5f8dfacb95571f44d13b2cb78476) for detailed documentation.
+Multi-repo task workflow is documented in this README and in `instructions/core/task-workflow.instructions.md`.
 
 ## Setup
 
@@ -108,7 +108,7 @@ Install profiles:
 # Generic core profile (default)
 ./scripts/install.sh --profile core
 
-# Core + league-specific files
+# Core + optional organization pack
 ./scripts/install.sh --profile league
 
 # Install everything found in instructions/ and prompts/
@@ -142,7 +142,7 @@ mkdir -p "$PROMPTS_DIR"
 cp instructions/core/*.instructions.md "$PROMPTS_DIR/"
 cp prompts/core/*.prompt.md "$PROMPTS_DIR/"
 
-# Optional league pack
+# Optional organization pack
 cp instructions/league/*.instructions.md "$PROMPTS_DIR/"
 cp prompts/league/*.prompt.md "$PROMPTS_DIR/"
 ```
@@ -162,7 +162,7 @@ description: Short summary   # shown in VS Code settings UI
 
 - `applyTo: "**"` — active for all files (always-on)
 - `applyTo: "**/*.go"` — active only when working on Go files
-- `applyTo: "src/el/**/*.go"` — active only for Go files under `src/el/`
+- `applyTo: "src/**/*.go"` — active only for Go files under `src/`
 
 `.prompt.md` files are reusable task prompts you can invoke from the Copilot Chat panel. They appear in the prompt picker when you type `/`.
 
@@ -192,7 +192,7 @@ To propose a new prompt or modify an existing one:
 
 ### Guidelines
 
-- **Instructions** (`instructions/core/`, `instructions/league/`): Always-on rules that activate based on file patterns. Use core for generic behavior and league for organization-specific behavior.
+- **Instructions** (`instructions/core/`, `instructions/league/`): Always-on rules that activate based on file patterns. Use core for generic behavior and optional packs for organization-specific behavior.
 - **Prompts** (`prompts/core/`, `prompts/league/`): On-demand task templates invoked from the Copilot Chat panel. Keep generic and organization-specific prompts separated.
 - **Scripts** (`scripts/`): Shell scripts referenced by instructions or prompts. Keep them portable across macOS and Linux.
 - Keep instruction files focused on a single concern — prefer multiple small files over one large file.
