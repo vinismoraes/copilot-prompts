@@ -32,33 +32,22 @@ declare -a git_repos
 for repo in $REPOS; do
   REPO_PATH="$REPOS_ROOT/$repo"
   WORKTREE_PATH="$TASK_DIR/$repo"
-  START_POINT=""
 
   if [[ ! -d "$REPO_PATH/.git" ]]; then
     echo "⚠️  Repo '$repo' not found at $REPO_PATH — skipping"
     continue
   fi
 
-  if git -C "$REPO_PATH" remote get-url origin >/dev/null 2>&1; then
-    echo "→ Fetching latest for $repo..."
-    git -C "$REPO_PATH" fetch origin --quiet --prune || true
-  fi
+  echo "→ Fetching latest for $repo..."
+  git -C "$REPO_PATH" fetch origin --quiet --prune
 
-  if git -C "$REPO_PATH" show-ref --verify --quiet refs/remotes/origin/main; then
-    START_POINT="origin/main"
-    # Update local main to match origin/main when available.
-    echo "→ Updating $repo local main..."
-    git -C "$REPO_PATH" update-ref refs/heads/main refs/remotes/origin/main 2>/dev/null || true
-  elif git -C "$REPO_PATH" show-ref --verify --quiet refs/heads/main; then
-    START_POINT="main"
-  else
-    echo "⚠️  Repo '$repo' has no main branch — skipping"
-    continue
-  fi
+  # Update local main to match origin/main
+  echo "→ Updating $repo local main..."
+  git -C "$REPO_PATH" update-ref refs/heads/main refs/remotes/origin/main 2>/dev/null || true
 
   echo "→ Creating worktree for $repo at $WORKTREE_PATH..."
-  if git -C "$REPO_PATH" worktree add "$WORKTREE_PATH" -b "$TICKET" "$START_POINT" 2>/dev/null; then
-    echo "  ✓ Created branch $TICKET from $START_POINT"
+  if git -C "$REPO_PATH" worktree add "$WORKTREE_PATH" -b "$TICKET" origin/main 2>/dev/null; then
+    echo "  ✓ Created branch $TICKET from origin/main"
   elif git -C "$REPO_PATH" worktree add "$WORKTREE_PATH" "$TICKET" 2>/dev/null; then
     echo "  ✓ Checked out existing branch $TICKET"
   else
@@ -86,7 +75,7 @@ if [[ ${#folder_paths[@]} -eq 0 ]]; then
   exit 1
 fi
 
-# Color palette — each task gets a distinct color based on ticket name hash
+# Color palette — each task gets a unique color, avoiding colors already used by other active worktrees
 PALETTE=(
   "#1a5276:#1a3c50"   # deep blue
   "#1e8449:#175c35"   # forest green
@@ -96,9 +85,33 @@ PALETTE=(
   "#2e86c1:#225f8a"   # sky blue
   "#17a589:#128068"   # teal
   "#cb4335:#993227"   # crimson
+  "#7d3c98:#5b2c6f"   # violet
+  "#2874a6:#1b4f72"   # navy
+  "#148f77:#0e6655"   # emerald
+  "#b9770e:#7e5109"   # gold
 )
-hash_val=$(echo -n "$TICKET" | cksum | awk '{print $1}')
-color_idx=$(( (hash_val % ${#PALETTE[@]}) + 1 ))
+
+# Collect colors already used by other active worktree workspaces
+used_colors=()
+for ws in "$WORKTREE_BASE"/*//*.code-workspace(N); do
+  [[ "$(dirname "$ws")" == "$TASK_DIR" ]] && continue
+  color=$(grep -o '"titleBar.activeBackground": *"[^"]*"' "$ws" 2>/dev/null | head -1 | sed 's/.*"\(#[^"]*\)".*/\1/')
+  [[ -n "$color" ]] && used_colors+=("$color")
+done
+
+# Pick the first unused color; fall back to hash if all are taken
+color_idx=0
+for i in {1..${#PALETTE[@]}}; do
+  active=${PALETTE[$i]%%:*}
+  if (( ! ${used_colors[(Ie)$active]} )); then
+    color_idx=$i
+    break
+  fi
+done
+if [[ $color_idx -eq 0 ]]; then
+  hash_val=$(echo -n "$TICKET" | cksum | awk '{print $1}')
+  color_idx=$(( (hash_val % ${#PALETTE[@]}) + 1 ))
+fi
 IFS=: read -r BG_ACTIVE BG_INACTIVE <<< "${PALETTE[$color_idx]}"
 
 # Generate .code-workspace file
