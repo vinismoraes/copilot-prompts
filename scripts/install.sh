@@ -76,9 +76,12 @@ core_instructions=(
 
 league_instructions=(
   "league/circleci.instructions.md"
+  "league/league-security-policy.instructions.md"
   "league/locale-ignore.instructions.md"
   "league/mcp-tools.instructions.md"
   "league/mirrord.instructions.md"
+  "league/pr-creation.instructions.md"
+  "league/pr-reviews.instructions.md"
 )
 
 core_prompts=(
@@ -126,7 +129,14 @@ link_file() {
   local name
   name=$(basename "$source_file")
   if [[ -L "$target_file" ]]; then
-    echo "  ✓ $name (already linked)"
+    local current
+    current=$(readlink "$target_file")
+    if [[ "$current" == "$source_file" ]]; then
+      echo "  ✓ $name (already linked)"
+    else
+      ln -sf "$source_file" "$target_file"
+      echo "  ✓ $name (updated link)"
+    fi
   elif [[ -f "$target_file" ]]; then
     echo "  ⚠️ $name exists (not a symlink) — skipping. Remove it manually to use the repo version."
   else
