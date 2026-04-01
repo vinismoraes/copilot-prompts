@@ -20,6 +20,7 @@ When the user says they are starting a new task or mentions a ticket number (e.g
 ```
 
 3. This creates worktrees on a new branch, generates a `.code-workspace`, and opens VS Code with all repos as roots.
+4. Before starting, check for stale worktrees from previous tasks and offer to clean them up.
 
 ## Adding a repo mid-task
 
@@ -31,13 +32,18 @@ If the task expands to touch another repo:
 
 ## Finishing a task
 
-When all PRs for a task are merged, the task is done. Offer to clean up:
+When the user says they're done with a task (regardless of PR status — PRs may be open, merged, or not created yet), offer to clean up:
+
+1. Close the VS Code worktree window first (it will become invalid after cleanup)
+2. Run the cleanup script:
 
 ```bash
 ./done-task.sh TICKET-1234
 ```
 
 This removes the worktrees and workspace directory. Remote branches stay intact.
+
+**Reminder**: Always close the worktree VS Code window before running `done-task.sh` — leaving stale windows open causes confusion and workspace errors.
 
 ## Available repos
 
@@ -49,6 +55,9 @@ Repos live under `$REPOS_ROOT/`.
 - The `services` repo automatically gets `src/el` added as a second workspace root when present
 - Worktrees are created at `$REPOS_ROOT/worktrees/TICKET/`
 - Main clones at `$REPOS_ROOT/` are never modified
+- Main clones at `$REPOS_ROOT/` are never modified
+- When a task is done, **close the worktree VS Code window** before running `done-task.sh` to avoid stale workspace errors
+- If you notice orphaned worktree windows (workspace files that no longer exist), close them immediately
 
 ## Quick starting a new repo
 
