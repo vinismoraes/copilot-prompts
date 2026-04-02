@@ -7,7 +7,7 @@ description: Quick start a new local Go repo and open a task workspace
 Bootstraps a brand-new local Go repository and starts a task workspace for it.
 
 Collect these inputs from the user before running commands:
-- `TICKET` (for example, `TEMP-1001`)
+- `BRANCH` (for example, `PCHAT-1001` or `my-feature`)
 - `REPO_NAME` (folder name under `$REPOS_ROOT`, default `~/GoProjects`)
 - Optional `MODULE_PATH` (default: `example.com/<repo_name>`)
 
@@ -28,7 +28,7 @@ If `MODULE_PATH` is not provided, run:
 2. Create and open the task workspace:
 
 ```bash
-~/GoProjects/new-task.sh TICKET REPO_NAME
+~/GoProjects/new-task.sh BRANCH REPO_NAME
 ```
 
 3. Report back with:

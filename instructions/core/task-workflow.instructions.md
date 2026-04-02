@@ -10,13 +10,13 @@ The repo root is configured via the `REPOS_ROOT` env var (default: `~/GoProjects
 
 ## Starting a new task
 
-When the user says they are starting a new task or mentions a ticket number (e.g. `TASK-1234`):
+When the user says they are starting a new task or mentions a branch name (e.g. `PCHAT-1234`, `add-search`):
 
 1. Ask which repos the task involves.
 2. Run the setup script:
 
 ```bash
-./new-task.sh TICKET-1234 repo-a repo-b
+./new-task.sh my-feature repo-a repo-b
 ```
 
 3. This creates worktrees on a new branch, generates a `.code-workspace`, and opens VS Code with all repos as roots.
@@ -27,7 +27,7 @@ When the user says they are starting a new task or mentions a ticket number (e.g
 If the task expands to touch another repo:
 
 ```bash
-./add-repo.sh TICKET-1234 repo-c
+./add-repo.sh my-feature repo-c
 ```
 
 ## Finishing a task
@@ -37,7 +37,7 @@ When the user says they're done with a task (regardless of PR status — PRs may
 1. Run the cleanup script **first** (as a background terminal — the user will close the window after):
 
 ```bash
-./done-task.sh TICKET-1234
+./done-task.sh my-feature
 ```
 
 2. Once cleanup succeeds, give the user a short send-off and tell them it's safe to close the window. Keep it human — something like:
@@ -54,9 +54,9 @@ Repos live under `$REPOS_ROOT/`.
 
 ## Important
 
-- Always confirm the ticket number and repos before running `new-task.sh`
+- Always confirm the branch name and repos before running `new-task.sh`
 - The `services` repo automatically gets `src/el` added as a second workspace root when present
-- Worktrees are created at `$REPOS_ROOT/worktrees/TICKET/`
+- Worktrees are created at `$REPOS_ROOT/worktrees/BRANCH/`
 - Main clones at `$REPOS_ROOT/` are never modified
 - When a task is done, run `done-task.sh` as a background terminal, then tell the user to close the window
 - If you notice orphaned worktree windows (workspace files that no longer exist), close them immediately
@@ -75,7 +75,7 @@ If the task requires a brand-new repo that does not exist under `$REPOS_ROOT`:
 3. Start the task with that repo:
 
 ```bash
-./new-task.sh TICKET-1234 REPO_NAME
+./new-task.sh my-feature REPO_NAME
 ```
 
 This creates an initial `main` branch and commit, then creates the task worktree/branch and workspace.
