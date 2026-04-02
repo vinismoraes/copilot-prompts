@@ -34,16 +34,19 @@ If the task expands to touch another repo:
 
 When the user says they're done with a task (regardless of PR status — PRs may be open, merged, or not created yet), offer to clean up:
 
-1. Close the VS Code worktree window first (it will become invalid after cleanup)
-2. Run the cleanup script:
+1. Run the cleanup script **first** (as a background terminal — the user will close the window after):
 
 ```bash
 ./done-task.sh TICKET-1234
 ```
 
+2. Once cleanup succeeds, give the user a short send-off and tell them it's safe to close the window. Keep it human — something like:
+
+> All clean. You're good to close this window. ✌️
+
 This removes the worktrees and workspace directory. Remote branches stay intact.
 
-**Reminder**: Always close the worktree VS Code window before running `done-task.sh` — leaving stale windows open causes confusion and workspace errors.
+**Important**: Run `done-task.sh` as a **background** terminal (`isBackground: true`) so it executes even if the user closes the window shortly after. Do NOT ask the user to close the window first — that kills the agent before cleanup can run.
 
 ## Available repos
 
@@ -55,8 +58,7 @@ Repos live under `$REPOS_ROOT/`.
 - The `services` repo automatically gets `src/el` added as a second workspace root when present
 - Worktrees are created at `$REPOS_ROOT/worktrees/TICKET/`
 - Main clones at `$REPOS_ROOT/` are never modified
-- Main clones at `$REPOS_ROOT/` are never modified
-- When a task is done, **close the worktree VS Code window** before running `done-task.sh` to avoid stale workspace errors
+- When a task is done, run `done-task.sh` as a background terminal, then tell the user to close the window
 - If you notice orphaned worktree windows (workspace files that no longer exist), close them immediately
 
 ## Quick starting a new repo
