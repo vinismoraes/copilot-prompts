@@ -43,7 +43,8 @@ copilot-prompts/
 ├── prompts/
 │   ├── core/           # Generic reusable task prompts (installed by default)
 │   └── league/         # Organization-specific prompts (opt-in)
-└── scripts/            # Install script + task workflow scripts
+└── scripts/
+    └── install.sh      # Symlinks prompts into VS Code
 ```
 
 ### Core instructions (installed by default)
@@ -57,7 +58,7 @@ copilot-prompts/
 | `pr-comments.instructions.md` | `**` | Positive, concise PR comments — always confirm before posting |
 | `pr-creation.instructions.md` | `**` | Always create PRs as draft, include issue tracker link |
 | `pr-reviews.instructions.md` | `**` | Explain PR feedback before acting, wait for user approval |
-| `task-workflow.instructions.md` | `**` | Multi-repo worktree management for cross-repo tasks |
+| `task-workflow.instructions.md` | `**` | Multi-repo worktree management via [dev-workspace](https://github.com/vinismoraes/dev-workspace) |
 
 ### Organization pack (league example, opt-in)
 
@@ -80,16 +81,6 @@ Install with `./scripts/install.sh --profile league`. These layer on top of core
 |---|---|---|
 | `quick-start-repo.prompt.md` | core | Bootstrap a new local Go repo and start a task workspace |
 | `mirrord.prompt.md` | league | Run mirrord to test a local app against a remote environment |
-
-### Scripts
-
-| Script | What it does |
-|---|---|
-| `install.sh` | Symlinks prompts into VS Code and task scripts into `$REPOS_ROOT` |
-| `new-task.sh` | Start a multi-repo task — creates worktrees, `.code-workspace`, opens VS Code |
-| `add-repo.sh` | Add a repo to an existing task mid-flight |
-| `done-task.sh` | Clean up worktrees and workspace when a task is done |
-| `quick-start-repo.sh` | Create a local Go repo scaffold (`main`, `go.mod`, `main.go`) |
 
 ## Setup
 
@@ -120,9 +111,7 @@ cd ~/GoProjects/copilot-prompts
 ./scripts/install.sh --profile core --prune
 ```
 
-The script symlinks files from your VS Code prompts directory to this repo — pulling updates applies them immediately. Task workflow scripts (`new-task.sh`, `add-repo.sh`, `done-task.sh`, `quick-start-repo.sh`) are symlinked into `$REPOS_ROOT` (default: `~/GoProjects`).
-
-If `$REPOS_ROOT` is not in `PATH`, install appends it to your shell rc file. Skip with `--no-shell-path`.
+The script symlinks files from your VS Code prompts directory to this repo — pulling updates applies them immediately.
 
 ### Option 2: Manual copy
 
@@ -197,6 +186,10 @@ If a pack file has the same name as a core file (e.g. `pr-creation.instructions.
 - Use `instructions/` for always-on rules (activated by `applyTo` globs)
 - Use `prompts/` for on-demand tasks (invoked from the Copilot Chat panel via `/`)
 - Keep scripts portable across macOS and Linux
+
+## Related
+
+- **[dev-workspace](https://github.com/vinismoraes/dev-workspace)** — Git worktree and VS Code workspace manager for cross-repo tasks. The `task-workflow.instructions.md` instruction teaches Copilot how to use it.
 
 ## License
 
