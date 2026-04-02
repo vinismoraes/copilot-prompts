@@ -1,6 +1,6 @@
 # Copilot Prompts
 
-A curated, generic-first set of VS Code Copilot instruction files and reusable prompts for backend development, with optional packs for organization-specific workflows.
+A curated set of [VS Code Copilot instruction files](https://code.visualstudio.com/docs/copilot/copilot-customization) and reusable prompts for backend development. Generic-first, with optional packs for organization-specific workflows.
 
 ## Quick start
 
@@ -9,7 +9,7 @@ git clone git@github.com:vinismoraes/copilot-prompts.git ~/GoProjects/copilot-pr
 cd ~/GoProjects/copilot-prompts && ./scripts/install.sh
 ```
 
-This installs the generic core profile by default. Restart VS Code and Copilot will start following the installed instructions.
+This installs the **core** profile by default. Restart VS Code and Copilot will start following the installed instructions.
 
 ## Why?
 
@@ -35,66 +35,70 @@ The same pattern applies across the board — PR creation, code reviews, diagram
 
 ## What's inside
 
-| Folder | Type | Purpose |
-|---|---|---|
-| `instructions/core/` | `.instructions.md` | Generic always-on rules installed by default |
-| `instructions/league/` | `.instructions.md` | Optional organization-specific instruction pack (example pack) |
-| `prompts/core/` | `.prompt.md` | Generic reusable task prompts installed by default |
-| `prompts/league/` | `.prompt.md` | Optional organization-specific prompts (example pack) |
-| `scripts/` | `.sh` | Task workflow scripts (worktrees, install) + install script |
+```
+copilot-prompts/
+├── instructions/
+│   ├── core/           # Generic always-on rules (installed by default)
+│   └── league/         # Organization-specific pack (example, opt-in)
+├── prompts/
+│   ├── core/           # Generic reusable task prompts (installed by default)
+│   └── league/         # Organization-specific prompts (opt-in)
+└── scripts/            # Install script + task workflow scripts
+```
 
-### Instructions
+### Core instructions (installed by default)
 
-| File | Applies to | Description |
+| File | Applies to | What it does |
 |---|---|---|
 | `diagrams.instructions.md` | `**` | Use Mermaid syntax for all diagrams and flowcharts |
 | `git-commits.instructions.md` | `**` | One-line, imperative, lowercase commit messages under 72 chars |
 | `git-push.instructions.md` | `**` | Always ask for confirmation before committing or pushing |
 | `go-standards.instructions.md` | `**/*.go` | Go coding standards — formatting, testing, mocking, comments |
+| `pr-comments.instructions.md` | `**` | Positive, concise PR comments — always confirm before posting |
 | `pr-creation.instructions.md` | `**` | Always create PRs as draft, include issue tracker link |
 | `pr-reviews.instructions.md` | `**` | Explain PR feedback before acting, wait for user approval |
-| `pre-commit-lint.instructions.md` | `**/*.go` | Run local linters before every commit |
 | `task-workflow.instructions.md` | `**` | Multi-repo worktree management for cross-repo tasks |
 
-### Optional organization pack (league example)
+### Organization pack (league example, opt-in)
 
-These files are available but not installed in the default core profile:
+Install with `./scripts/install.sh --profile league`. These layer on top of core:
 
-| File | Applies to | Description |
+| File | Applies to | What it does |
 |---|---|---|
-| `circleci.instructions.md` | `**` | CircleCI API interaction for checking CI status and rerunning jobs |
-| `locale-ignore.instructions.md` | `src/el/**/*.go` | Add `// locale.Ignore` comments to non-user-facing strings |
-| `mcp-tools.instructions.md` | `**/mcp/**/*.go` | MCP tool development patterns for messaging and connected care |
+| `circleci.instructions.md` | `**` | CircleCI API interaction for CI status and rerunning jobs |
+| `league-security-policy.instructions.md` | `**` | HIPAA platform security guardrails |
+| `locale-ignore.instructions.md` | `src/el/**/*.go` | Add `// locale.Ignore` to non-user-facing strings |
+| `mcp-tools.instructions.md` | `**/mcp/**/*.go` | MCP tool development patterns |
 | `mirrord.instructions.md` | `**` | Running services locally with mirrord against remote envs |
+| `pre-commit-lint.instructions.md` | `**/*.go` | Run local linters before every commit |
+| `pr-creation.instructions.md` | `**` | PR creation with Jira ticket conventions (overrides core) |
+| `pr-reviews.instructions.md` | `**` | PR reviews with Copilot reviewer bot (overrides core) |
 
 ### Prompts
 
-| File | Description |
-|---|---|
-| `quick-start-repo.prompt.md` | Bootstrap a new local Go repo and start a task workspace |
-| `mirrord.prompt.md` | Run mirrord to test a local app against a remote environment (optional profile) |
+| File | Profile | What it does |
+|---|---|---|
+| `quick-start-repo.prompt.md` | core | Bootstrap a new local Go repo and start a task workspace |
+| `mirrord.prompt.md` | league | Run mirrord to test a local app against a remote environment |
 
 ### Scripts
 
-| File | Description |
+| Script | What it does |
 |---|---|
 | `install.sh` | Symlinks prompts into VS Code and task scripts into `$REPOS_ROOT` |
-| `quick-start-repo.sh` | Creates a local Go repo scaffold (`main`, `go.mod`, `main.go`) |
-| `new-task.sh` | Start a new multi-repo task — creates worktrees, generates a `.code-workspace`, opens VS Code |
+| `new-task.sh` | Start a multi-repo task — creates worktrees, `.code-workspace`, opens VS Code |
 | `add-repo.sh` | Add a repo to an existing task mid-flight |
 | `done-task.sh` | Clean up worktrees and workspace when a task is done |
-
-Multi-repo task workflow is documented in this README and in `instructions/core/task-workflow.instructions.md`.
+| `quick-start-repo.sh` | Create a local Go repo scaffold (`main`, `go.mod`, `main.go`) |
 
 ## Setup
 
 ### Prerequisites
 
-- [VS Code](https://code.visualstudio.com/) with [GitHub Copilot](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot) and [GitHub Copilot Chat](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot-chat) extensions installed
+- [VS Code](https://code.visualstudio.com/) with [GitHub Copilot](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot) extension
+- macOS or Linux
 
 ### Option 1: Install script (recommended)
-
-Clone the repo and run the install script to symlink all files into VS Code's prompt directory:
 
 ```bash
 git clone git@github.com:vinismoraes/copilot-prompts.git ~/GoProjects/copilot-prompts
@@ -102,34 +106,23 @@ cd ~/GoProjects/copilot-prompts
 ./scripts/install.sh
 ```
 
-Install profiles:
+**Profiles** control which instruction packs get installed:
 
 ```bash
-# Generic core profile (default)
-./scripts/install.sh --profile core
-
-# Core + optional organization pack
-./scripts/install.sh --profile league
-
-# Install everything found in instructions/ and prompts/
-./scripts/install.sh --profile all
+./scripts/install.sh                    # core only (default)
+./scripts/install.sh --profile league   # core + league pack
+./scripts/install.sh --profile all      # everything
 ```
 
-Optional pruning:
+**Pruning** removes symlinks from previous profiles that are no longer selected:
 
 ```bash
-# Remove repo-managed links not selected by profile
 ./scripts/install.sh --profile core --prune
 ```
 
-The script creates symlinks from your VS Code prompts directory to this repo, so pulling updates automatically applies them. It also symlinks the task workflow scripts (`new-task.sh`, `add-repo.sh`, `done-task.sh`, `quick-start-repo.sh`) into `$REPOS_ROOT` (default: `~/GoProjects`) and validates they are callable from your shell.
+The script symlinks files from your VS Code prompts directory to this repo — pulling updates applies them immediately. Task workflow scripts (`new-task.sh`, `add-repo.sh`, `done-task.sh`, `quick-start-repo.sh`) are symlinked into `$REPOS_ROOT` (default: `~/GoProjects`).
 
-If `$REPOS_ROOT` is not in `PATH`, install automatically appends it to your shell rc file (for example `~/.zshrc`).
-
-```bash
-# Skip shell PATH updates if you prefer managing PATH manually
-./scripts/install.sh --no-shell-path
-```
+If `$REPOS_ROOT` is not in `PATH`, install appends it to your shell rc file. Skip with `--no-shell-path`.
 
 ### Option 2: Manual copy
 
@@ -177,26 +170,33 @@ If you used the install script (symlinks), changes apply immediately. If you cop
 
 ## Contributing
 
-To propose a new prompt or modify an existing one:
-
-1. Fork this repository
-2. Create a new `.instructions.md` or `.prompt.md` file in the appropriate folder (or edit an existing one)
-3. Include YAML frontmatter with `applyTo` and `description` fields:
+1. Fork this repo
+2. Add or edit files in the appropriate folder
+3. Include YAML frontmatter:
    ```yaml
    ---
    applyTo: "**/*.go"
    description: Short description of what this instruction does
    ---
    ```
-4. Open a pull request with a clear description of the change
+4. Open a pull request
+
+### Creating your own pack
+
+To add an organization-specific pack (e.g. `acme`):
+
+1. Create `instructions/acme/` and/or `prompts/acme/`
+2. Add your `.instructions.md` and `.prompt.md` files
+3. Install with `./scripts/install.sh --profile acme` (the `all` profile picks up new packs automatically)
+
+If a pack file has the same name as a core file (e.g. `pr-creation.instructions.md`), the pack version overrides core — the last symlink wins.
 
 ### Guidelines
 
-- **Instructions** (`instructions/core/`, `instructions/league/`): Always-on rules that activate based on file patterns. Use core for generic behavior and optional packs for organization-specific behavior.
-- **Prompts** (`prompts/core/`, `prompts/league/`): On-demand task templates invoked from the Copilot Chat panel. Keep generic and organization-specific prompts separated.
-- **Scripts** (`scripts/`): Shell scripts referenced by instructions or prompts. Keep them portable across macOS and Linux.
-- Keep instruction files focused on a single concern — prefer multiple small files over one large file.
-- Test new prompts locally before submitting by copying them to your VS Code prompts directory.
+- One concern per file — prefer multiple small files over one large file
+- Use `instructions/` for always-on rules (activated by `applyTo` globs)
+- Use `prompts/` for on-demand tasks (invoked from the Copilot Chat panel via `/`)
+- Keep scripts portable across macOS and Linux
 
 ## License
 
