@@ -48,6 +48,26 @@ This removes the worktrees and workspace directory. Remote branches stay intact.
 
 **Important**: Run `done-task.sh` as a **background** terminal (`isBackground: true`) so it executes even if the user closes the window shortly after. Do NOT ask the user to close the window first — that kills the agent before cleanup can run.
 
+## Absorbing latest `main` into an in-flight task
+
+When the user asks to "rebase onto main", "sync with main", "pull in latest main", or similar for an active task, use `sync-task.sh`:
+
+```bash
+./sync-task.sh my-feature              # rebase (default)
+./sync-task.sh my-feature --merge      # merge instead
+./sync-task.sh my-feature --dry-run    # preview
+```
+
+For each worktree of the task: fetches origin, safely fast-forwards local `main`, then rebases (or merges) the task branch onto `origin/main`. Skips any worktree with uncommitted changes (warns) and aborts cleanly on conflicts (exits 2). Never touches WIP.
+
+If it reports conflicts, don't retry blindly — surface the conflicted worktree path and let the user resolve manually.
+
+## Keeping main clones fresh in the background
+
+A launchd job (`~/Library/LaunchAgents/com.vinismoraes.sync-main-clones.plist`) runs `sync-main-clones.sh --quiet` every 30 min. It fetches every top-level clone under `$REPOS_ROOT` and safely updates local `main` via the shared `safe_update_main` helper — never desyncs a working tree, even when `main` is checked out in a VS Code window.
+
+If a main clone is showing stale/phantom file changes, DON'T guess the fix — run `~/GoProjects/dev-workspace/clean-clones.sh --dry-run` first to see the state, and check `~/Library/Logs/sync-main-clones.log` for recent activity.
+
 ## Available repos
 
 Repos live under `$REPOS_ROOT/`.
