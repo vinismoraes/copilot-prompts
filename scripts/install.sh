@@ -5,8 +5,8 @@
 #
 # Usage:
 #   ./install.sh                        # core profile (default)
-#   ./install.sh --profile league       # core + league pack
-#   ./install.sh --profile all          # everything
+#   ./install.sh --profile <pack>       # core + <pack> (any folder under instructions/ or prompts/)
+#   ./install.sh --profile all          # every pack
 #   ./install.sh --profile core --prune # remove links not in selected profile
 
 set -e
@@ -25,26 +25,31 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
+# Auto-discover available packs from filesystem
+typeset -a AVAILABLE_PACKS
+AVAILABLE_PACKS=("core")
+for d in "$REPO_DIR"/instructions/*/(N) "$REPO_DIR"/prompts/*/(N); do
+  pack=$(basename "$d")
+  if [[ ! " ${AVAILABLE_PACKS[*]} " =~ " $pack " ]]; then
+    AVAILABLE_PACKS+=("$pack")
+  fi
+done
+
 # Validate profile
-case "$PROFILE" in
-  core|league|all) ;;
-  *) echo "Unknown profile: $PROFILE (expected: core, league, all)"; exit 1 ;;
-esac
+if [[ "$PROFILE" != "all" && ! " ${AVAILABLE_PACKS[*]} " =~ " $PROFILE " ]]; then
+  echo "Unknown profile: $PROFILE"
+  echo "Available: ${AVAILABLE_PACKS[*]} all"
+  exit 1
+fi
 
 # Build list of profile directories to install
 typeset -a PROFILE_DIRS
-PROFILE_DIRS=("core")
-if [[ "$PROFILE" == "league" || "$PROFILE" == "all" ]]; then
-  PROFILE_DIRS+=("league")
-fi
 if [[ "$PROFILE" == "all" ]]; then
-  # Include any future packs automatically
-  for d in "$REPO_DIR"/instructions/*/; do
-    pack=$(basename "$d")
-    if [[ ! " ${PROFILE_DIRS[*]} " =~ " $pack " ]]; then
-      PROFILE_DIRS+=("$pack")
-    fi
-  done
+  PROFILE_DIRS=("${AVAILABLE_PACKS[@]}")
+elif [[ "$PROFILE" == "core" ]]; then
+  PROFILE_DIRS=("core")
+else
+  PROFILE_DIRS=("core" "$PROFILE")
 fi
 
 # --- Prompts ---

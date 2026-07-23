@@ -39,7 +39,8 @@ The same pattern applies across the board — PR creation, code reviews, diagram
 copilot-prompts/
 ├── instructions/
 │   ├── core/           # Generic always-on rules (installed by default)
-│   └── league/         # Organization-specific pack (example, opt-in)
+│   ├── league/         # Organization-specific pack (example, opt-in)
+│   └── optional/       # Cross-cutting opt-in patterns (e.g. journaling)
 ├── prompts/
 │   ├── core/           # Generic reusable task prompts (installed by default)
 │   └── league/         # Organization-specific prompts (opt-in)
@@ -75,12 +76,31 @@ Install with `./scripts/install.sh --profile league`. These layer on top of core
 | `pr-creation.instructions.md` | `**` | PR creation with Jira ticket conventions (overrides core) |
 | `pr-reviews.instructions.md` | `**` | PR reviews with Copilot reviewer bot (overrides core) |
 
+### Optional pack (cross-cutting patterns, opt-in)
+
+Install with `./scripts/install.sh --profile optional`. Layer these on top of any other pack.
+
+| File | Applies to | What it does |
+|---|---|---|
+| `journaling.instructions.md` | `**` | Persist engineering activity to a local markdown journal (Obsidian, plain notes, etc.) so the agent has context across sessions. **No effect unless `JOURNAL_ROOT` is set and the directory exists.** |
+
 ### Prompts
 
 | File | Profile | What it does |
 |---|---|---|
 | `quick-start-repo.prompt.md` | core | Bootstrap a new local Go repo and start a task workspace |
 | `mirrord.prompt.md` | league | Run mirrord to test a local app against a remote environment |
+
+### Which packs should I install?
+
+| You are… | Install |
+|---|---|
+| A backend engineer, any org | `./install.sh` (core only) |
+| A League backend engineer | `./install.sh --profile league` |
+| Willing to try agent-assisted journaling | Add `./install.sh --profile optional` on top |
+| Want everything at once | `./install.sh --profile all` |
+
+Profiles can be re-run — later runs update existing symlinks. Use `--prune` to remove links from packs you no longer want.
 
 ## Setup
 
@@ -102,8 +122,11 @@ cd ~/GoProjects/copilot-prompts
 ```bash
 ./scripts/install.sh                    # core only (default)
 ./scripts/install.sh --profile league   # core + league pack
+./scripts/install.sh --profile optional # core + optional pack (journaling, etc.)
 ./scripts/install.sh --profile all      # everything
 ```
+
+Pack discovery is automatic — any folder you add under `instructions/` or `prompts/` becomes installable via `--profile <foldername>`.
 
 **Pruning** removes symlinks from previous profiles that are no longer selected:
 
