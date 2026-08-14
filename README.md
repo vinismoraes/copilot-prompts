@@ -38,14 +38,16 @@ The same pattern applies across the board — PR creation, code reviews, diagram
 ```
 copilot-prompts/
 ├── instructions/
-│   ├── core/           # Generic always-on rules (installed by default)
-│   ├── league/         # Organization-specific pack (example, opt-in)
-│   └── optional/       # Cross-cutting opt-in patterns (e.g. journaling)
+│   ├── core/               # Generic always-on rules (installed by default)
+│   ├── league/             # Organization-specific pack (example, opt-in)
+│   ├── optional/           # Cross-cutting opt-in patterns (e.g. journaling)
+│   └── personal/           # Machine-specific overrides (private, opt-in)
 ├── prompts/
-│   ├── core/           # Generic reusable task prompts (installed by default)
-│   └── league/         # Organization-specific prompts (opt-in)
+│   ├── core/               # Generic reusable task prompts (installed by default)
+│   └── league/             # Organization-specific prompts (opt-in)
 └── scripts/
-    └── install.sh      # Symlinks prompts into VS Code
+    ├── install.sh          # Symlinks prompts into VS Code Copilot
+    └── claude-install.sh   # Symlinks prompts into Claude Code (~/.claude/)
 ```
 
 ### Core instructions (installed by default)
@@ -127,6 +129,27 @@ cd ~/GoProjects/copilot-prompts
 ```
 
 Pack discovery is automatic — any folder you add under `instructions/` or `prompts/` becomes installable via `--profile <foldername>`.
+
+### Claude Code
+
+If you're using [Claude Code](https://docs.claude.com/en/docs/claude-code) instead of (or alongside) VS Code Copilot, use the sibling script:
+
+```bash
+./scripts/claude-install.sh --profile league,personal --force
+```
+
+Same profile UX as `install.sh`. It symlinks instruction files into `~/.claude/instructions/` and prompt files into `~/.claude/commands/` (as slash commands, so `foo.prompt.md` → `/foo`), then regenerates the block between `<!-- BEGIN AUTO-INSTALLED INSTRUCTIONS -->` markers in `~/.claude/CLAUDE.md` so Claude actually imports them at session start.
+
+- `--profile a,b` or `--profile a --profile b` — install multiple packs
+- `--force` — replace regular files (e.g. from a Copilot migration) with symlinks
+- `--prune` — remove symlinks from packs not in the current profile
+
+On a fresh machine:
+
+```bash
+git clone git@github.com:vinismoraes/copilot-prompts.git ~/GoProjects/copilot-prompts
+cd ~/GoProjects/copilot-prompts && ./scripts/claude-install.sh --profile league
+```
 
 **Pruning** removes symlinks from previous profiles that are no longer selected:
 
