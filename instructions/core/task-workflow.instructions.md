@@ -12,15 +12,20 @@ The repo root is configured via the `REPOS_ROOT` env var (default: `~/GoProjects
 
 When the user says they are starting a new task or mentions a branch name (e.g. `PCHAT-1234`, `add-search`):
 
-1. Ask which repos the task involves.
-2. Run the setup script:
+1. Ask (or infer from the ticket) which repos the task involves.
+2. **Decide whether task-scoping is worth it**:
+   - If the task touches only the user's default repo (backend devs: `services`) → **skip `new-task.sh`**, just work on a branch in the existing checkout. The scoped workspace adds friction with no measurable benefit here.
+   - If the task touches any repo outside the user's default (backend-extensions, agent-orchestrator, kubernetes-migration, eos-apps, etc.) → **run `new-task.sh`** so the workspace narrows to only the relevant repos.
+3. If step 2 chose scoping, run the setup script:
 
 ```bash
 ./new-task.sh my-feature repo-a repo-b
 ```
 
-3. This creates worktrees on a new branch, generates a `.code-workspace`, and opens VS Code with all repos as roots.
-4. Before starting, check for stale worktrees from previous tasks and offer to clean them up.
+4. This creates worktrees on a new branch, generates a `.code-workspace`, and opens VS Code with all repos as roots.
+5. Before starting, check for stale worktrees from previous tasks and offer to clean them up.
+
+*(Rationale: internal Week 1 study, July 2026, N=8 tickets, 25 Claude Code runs. Task-scoping produced +50–100pp first-attempt file coverage when the target repo was outside the user's default, and 0pp difference — dominated by ~27pp model non-determinism — for same-default-repo tickets. Full data: `~/GoProjects/studies/task-scoped-agent-context/runs/_summary.md`.)*
 
 ## Adding a repo mid-task
 
