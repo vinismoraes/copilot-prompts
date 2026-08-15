@@ -58,6 +58,16 @@ If the user later asks to update a shared Confluence page, follow the `confluenc
 
 Do NOT port working documents (project notes, plans, session logs) in full. They contain personal reasoning that should stay in the vault. When in doubt, ask the user which sections to include — assume less rather than more.
 
+## Filter test before posting to shared pages
+
+Before writing a bullet to any shared page (Confluence daily updates, weekly reports, stakeholder docs, pod pages), each entry must pass ALL three:
+
+1. **Public deliverable** — links to a PR, ticket, published doc, or team-visible artifact.
+2. **Team-legible** — someone else on the pod can act on or verify it.
+3. **No personal paths / tooling** — doesn't reference `~/.claude/`, `~/.copilot/`, `~/ObsidianVault/`, `copilot-prompts`, personal MCP config, memory files, or agent-instruction changes. Meta-work about *how you work* is not shipped work-product.
+
+If any fails: it stays in the Obsidian vault only. When in doubt, drop the bullet and ask.
+
 ## Related
 
 - `obsidian-journaling.instructions.md` — how the vault is structured; what each note type contains
