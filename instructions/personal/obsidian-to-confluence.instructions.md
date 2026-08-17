@@ -68,6 +68,48 @@ Before writing a bullet to any shared page (Confluence daily updates, weekly rep
 
 If any fails: it stays in the Obsidian vault only. When in doubt, drop the bullet and ask.
 
+## Voice: guardrails against AI-ish drift
+
+Grounded in feedback on the Aug 17 Care Finder hard-cut proposal (MS1/7584940056): "writing feels AI-ish, many things not sounding clear or matching our vocabulary." Five specific patterns Victoria flagged inline, and the rules they became.
+
+### The five failure modes
+
+1. **Asserting scope/priority framings the reader hadn't confirmed.**
+   - What happened: "Facility comparison is a scope extension" — a categorization I derived from my own read of the bet page. The PM (owner of scope) rejected it as "not correct".
+   - Rule: never state scope, priority, or product intent as fact when it came from your own reading of source material. Frame as "my read of X is Y — flag if wrong", or drop the point. The reader owns scope, not you.
+
+2. **Vague phrasing instead of naming the concrete thing.**
+   - What happened: "new effort with integration risk we can't estimate until we're in it" — Victoria had to ask "is that the new effort required?" because the actual work (wiring the Book CTA to the Scheduling SDK date/time selector) was never named.
+   - Rule: every claim names the concrete thing — the SDK, the CTA, the ticket, the flow, the person. If you catch yourself writing "the effort", "the integration", "the extension", "the intended path", "the headline experience" — stop and name it. If you can't name it, you don't understand it yet and the reader definitely won't.
+
+3. **Internal engineering jargon in stakeholder-facing prose.**
+   - What happened: "degraded state", "compare surface", "union-of-rows model" — none appear in the bet page or in shared product vocabulary. PM had to ask what "degraded state" meant.
+   - Rule: every term must already appear in the bet page (or equivalent source-of-truth artifact) or be defined inline on first use. When in doubt, use the exact words the bet page uses. If the bet says "comparison view", don't rename it "compare surface".
+
+4. **Aggregated counts instead of concrete lists when the reader wants to click through.**
+   - What happened: "≥ 11 tickets" in a deferred bucket, tickets buried in a comma-separated inline list. Victoria: "is it easy to get a list of these tickets?"
+   - Rule: when the audience will ask "which ones?", the doc answers without them asking. Options: expand-macro dropdown per bucket, JQL link with the label, or plain bulleted list. Naked counts are anti-user.
+
+5. **Motivational / stakes-framing filler sentences.**
+   - What happened: "draw a line", "move the team on", "anchoring the ship on an unknown-shape investigation", "no dead-ends", "the intended long-term path".
+   - Rule: cut any sentence that would still make sense with the project name swapped out. Those are AI motivational filler and are the loudest voice tell. Say what happened, what you propose, what you're asking — nothing else.
+
+### Pre-post checklist (must run before publishing to a shared Confluence page)
+
+Answer YES to each. Any NO means revise, or downgrade to a v0.1 stub and get a live read before publishing.
+
+1. **Named things.** Every claim names the concrete artifact (SDK / CTA / ticket / flow / person). Zero "the effort" / "the integration" / "the path".
+2. **Vocabulary match.** Every term is in the source-of-truth artifact or defined inline. Zero internal jargon assumed shared.
+3. **Scope framings not invented.** Every scope/priority/intent statement is either quoted from a source-of-truth artifact or explicitly framed as "my read — flag if wrong".
+4. **Concrete lists, not counts.** Wherever the reader might ask "which ones?", the answer is one click away. No naked "≥ N tickets".
+5. **No motivational filler.** Every sentence breaks if you remove the specific detail. Zero "draw a line" / "close out" / "move on" / "headline" / "long-term path" phrases.
+
+### The structural fix: send the shape before you write the page
+
+The Aug 17 doc landed as a polished v1 with confident prose that hid its framing errors — Victoria had to peel them back inline. The voice checklist above catches individual tells; only this catches structural framing errors:
+
+**Before creating the Confluence page**, send the section headers + one-line-per-section summary to the primary reviewer (DM or Slack). Ask "am I framing this the way you'd frame it?" Only publish after they've read the shape. This is the largest single guardrail against the "land fully-formed" anti-pattern.
+
 ## Related
 
 - `obsidian-journaling.instructions.md` — how the vault is structured; what each note type contains
