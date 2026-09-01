@@ -93,6 +93,42 @@ A verified gap is fine to state. The weekly-report gap in the same document was
 verified: absent for three named weeks, and cross-checked against a sibling pod
 that shipped all three. That is evidence, not inference.
 
+## 4. Verify the base before you build on it
+
+The same failure applied to git state. `git log -1` tells you where HEAD is.
+It does not tell you which branch you are on, and it does not tell you whether
+that commit exists upstream.
+
+```
+❌ git log -1 → "4b3f632c use posix character classes…" → looks like main →
+   git checkout -b my-feature
+✅ git fetch origin && git checkout main && git pull --ff-only &&
+   git checkout -b my-feature
+```
+
+**The specific trap is squash-merged PRs.** When a PR is squash-merged, the
+branch's original commits stay in your local history forever and are *not*
+ancestors of `origin/main` — the squashed commit is. Branch off those and your
+PR re-proposes already-merged work: an inflated diff, a `CONFLICTING`
+mergeable state, and a reviewer wondering why you rewrote their file.
+
+Before `git checkout -b`, confirm all three:
+
+1. **Which branch** — `git branch --show-current`, not `git log -1`.
+2. **Current with origin** — `git fetch` then `git rev-list --left-right --count main...origin/main`. Any non-zero left number means local commits that may not be upstream.
+3. **Base is upstream** — `git merge-base --is-ancestor HEAD origin/main` exits 0 if your base is genuinely in main's history.
+
+Recovery when you find out late:
+
+```bash
+git rebase --onto origin/main <bad-base-sha> <your-branch>
+git push --force-with-lease origin <your-branch>
+```
+
+Force-push is safe on a draft PR with no approvals. It is not safe once
+review has landed — a force-push dismisses PAIR approval and can re-add
+CODEOWNERS teams. Check `gh pr view <n> --json reviewDecision` first.
+
 ## Checklist
 
 Before any factual claim goes into something another person reads:
@@ -103,6 +139,8 @@ Before any factual claim goes into something another person reads:
 4. **Status, ownership and dates re-read from the source today**, not recalled
    from earlier in the session.
 5. **Where the number will drift, link the live query** instead of freezing it.
+6. **Branch cut from a fetched, verified base** — branch name checked, not
+   inferred from a commit message.
 
 ## Why this exists
 
@@ -119,6 +157,13 @@ were wrong, and the user caught all four:
 
 Every one was an inference from an artifact, stated as fact, in a document
 about a colleague's own work written for their manager to read.
+
+Then, in the same session, a fifth of the same shape with a different blast
+radius: a branch cut after reading `git log -1` and taking the commit at HEAD
+for `main`. It was PR #668's pre-squash history. The resulting PR proposed
+`+166/−16` across two files instead of `+69/−6` across one, showed as
+`CONFLICTING`, and re-proposed work that was already merged. One commit
+message read; branch and upstream state both assumed.
 
 ## Related
 
