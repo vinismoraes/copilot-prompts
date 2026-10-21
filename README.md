@@ -47,7 +47,9 @@ copilot-prompts/
 │   └── league/             # Organization-specific prompts (opt-in)
 └── scripts/
     ├── install.sh          # Symlinks prompts into VS Code Copilot
-    └── claude-install.sh   # Symlinks prompts into Claude Code (~/.claude/)
+    ├── claude-install.sh   # Symlinks prompts into Claude Code (~/.claude/)
+    ├── install-awake.sh    # Optional macOS keep-awake setup
+    └── awake/              # Standalone service, optional Codex adapter, tests
 ```
 
 ### Core instructions (installed by default)
@@ -158,6 +160,47 @@ cd ~/GoProjects/copilot-prompts && ./scripts/claude-install.sh --profile league
 ```
 
 The script symlinks files from your VS Code prompts directory to this repo — pulling updates applies them immediately.
+
+### Automatic keep-awake (macOS, opt-in)
+
+Install Awake together with the agent instructions:
+
+```bash
+./scripts/install.sh --profile league --awake
+# Also detect Codex tasks across all VS Code windows:
+./scripts/install.sh --profile league --awake-codex
+
+# Same options for Claude Code:
+./scripts/claude-install.sh --profile league,personal --awake-codex
+```
+
+These flags include the `awake` instruction/prompt pack and install/start a
+per-user login service. It runs automatically after login; no manual script
+invocation is needed for each Codex task. Re-running setup reuses the installed
+package and preserves the adapter mode unless explicitly changed.
+
+The core service works without Codex. Copilot and Claude instructions wrap long
+foreground builds/tests with `awake run -- command`; only the optional Codex
+adapter detects entire active turns. Instruction-based command wrapping is
+best-effort agent behavior, not a Copilot/Claude lifecycle hook.
+
+Fresh installations default to preventing system sleep. To keep the display
+active and renew user activity during Codex tasks as well:
+
+```bash
+./scripts/install-awake.sh --codex --codex-mode active
+```
+
+To install only the instructions (without starting a service), use
+`--profile awake`. The `all` profile also includes the instructions but does
+not install or start Awake unless `--awake`/`--awake-codex` is passed. The
+instructions leave absent or explicitly stopped services alone.
+
+After installation, use `awake status`, `awake stop`, or `awake start` (or
+`~/.local/bin/awake` if that directory is not on PATH). Each task gets its own
+expiring lease, so one window finishing never releases another window's lease.
+For supported modes, the local integration protocol, tests, and uninstall,
+see [the Awake guide](scripts/awake/README.md).
 
 ### Option 2: Manual copy
 

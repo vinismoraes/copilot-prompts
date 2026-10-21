@@ -16,11 +16,15 @@ REPO_DIR="$(dirname "$SCRIPT_DIR")"
 
 PROFILE="core"
 PRUNE=false
+AWAKE=false
+AWAKE_CODEX=false
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --profile) PROFILE="$2"; shift 2 ;;
     --prune) PRUNE=true; shift ;;
+    --awake) AWAKE=true; shift ;;
+    --awake-codex) AWAKE=true; AWAKE_CODEX=true; shift ;;
     *) echo "Unknown option: $1"; exit 1 ;;
   esac
 done
@@ -53,6 +57,17 @@ else
 fi
 
 # --- Prompts ---
+
+if $AWAKE; then
+  if [[ ! " ${PROFILE_DIRS[*]} " =~ " awake " ]]; then
+    PROFILE_DIRS+=("awake")
+  fi
+  if $AWAKE_CODEX; then
+    "$SCRIPT_DIR/install-awake.sh" --codex
+  else
+    "$SCRIPT_DIR/install-awake.sh"
+  fi
+fi
 
 case "$(uname)" in
   Darwin) PROMPTS_DIR="$HOME/Library/Application Support/Code/User/prompts" ;;

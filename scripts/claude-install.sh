@@ -30,6 +30,8 @@ typeset -a REQUESTED_PROFILES
 REQUESTED_PROFILES=()
 PRUNE=false
 FORCE=false
+AWAKE=false
+AWAKE_CODEX=false
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -41,6 +43,8 @@ while [[ $# -gt 0 ]]; do
       shift 2 ;;
     --prune) PRUNE=true; shift ;;
     --force) FORCE=true; shift ;;
+    --awake) AWAKE=true; shift ;;
+    --awake-codex) AWAKE=true; AWAKE_CODEX=true; shift ;;
     *) echo "Unknown option: $1"; exit 1 ;;
   esac
 done
@@ -79,6 +83,17 @@ for p in "${REQUESTED_PROFILES[@]}"; do
     PROFILE_DIRS+=("$p")
   fi
 done
+
+if $AWAKE; then
+  if [[ ! " ${PROFILE_DIRS[*]} " =~ " awake " ]]; then
+    PROFILE_DIRS+=("awake")
+  fi
+  if $AWAKE_CODEX; then
+    "$SCRIPT_DIR/install-awake.sh" --codex
+  else
+    "$SCRIPT_DIR/install-awake.sh"
+  fi
+fi
 
 CLAUDE_DIR="$HOME/.claude"
 INSTRUCTIONS_DIR="$CLAUDE_DIR/instructions"
