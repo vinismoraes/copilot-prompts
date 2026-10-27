@@ -8,6 +8,7 @@
 #   ./install.sh --profile <pack>       # core + <pack> (any folder under instructions/ or prompts/)
 #   ./install.sh --profile all          # every pack
 #   ./install.sh --profile core --prune # remove links not in selected profile
+#   ./install.sh --codex-efficiency    # generic Codex kit in ~/.codex
 
 set -e
 
@@ -18,6 +19,7 @@ PROFILE="core"
 PRUNE=false
 AWAKE=false
 AWAKE_CODEX=false
+CODEX_EFFICIENCY=false
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -25,6 +27,7 @@ while [[ $# -gt 0 ]]; do
     --prune) PRUNE=true; shift ;;
     --awake) AWAKE=true; shift ;;
     --awake-codex) AWAKE=true; AWAKE_CODEX=true; shift ;;
+    --codex-efficiency) CODEX_EFFICIENCY=true; shift ;;
     *) echo "Unknown option: $1"; exit 1 ;;
   esac
 done
@@ -54,6 +57,14 @@ elif [[ "$PROFILE" == "core" ]]; then
   PROFILE_DIRS=("core")
 else
   PROFILE_DIRS=("core" "$PROFILE")
+fi
+
+if $CODEX_EFFICIENCY; then
+  if [[ " ${PROFILE_DIRS[*]} " =~ " league " ]]; then
+    echo "Install organization prompts separately; use report-only for an existing organizational Codex profile."
+    exit 1
+  fi
+  python3 "$SCRIPT_DIR/codex-efficiency/install.py" --check
 fi
 
 # --- Prompts ---
@@ -135,4 +146,10 @@ if $PRUNE; then
 fi
 
 echo ""
+if $CODEX_EFFICIENCY; then
+  echo ""
+  echo "Installing Codex efficiency tools..."
+  python3 "$SCRIPT_DIR/codex-efficiency/install.py" --apply
+fi
+
 echo "✅ Done. Pull this repo and re-run to update."

@@ -132,6 +132,16 @@ cd ~/GoProjects/copilot-prompts
 
 Pack discovery is automatic — any folder you add under `instructions/` or `prompts/` becomes installable via `--profile <foldername>`.
 
+### Codex efficiency and usage report
+
+To install the Codex cost and usage tools alongside a Copilot profile:
+
+```bash
+./scripts/install.sh --codex-efficiency   # generic setup
+```
+
+This is opt-in. It installs organization-neutral Codex instructions by default, two specialist roles, a separate improvement report, and a local weekly HTML dashboard. Organization-specific policies stay in their own profiles and repositories; the Codex kit contains only generic guidance. It links task guidance from this repository, so the setup works on another machine after cloning this repo. Existing global instructions in the default Codex home block the generic install; other differing destination files are backed up before replacement. See [the Codex efficiency guide](scripts/codex-efficiency/README.md) for preview, report, and limitations.
+
 ### Claude Code
 
 If you're using [Claude Code](https://docs.claude.com/en/docs/claude-code) instead of (or alongside) VS Code Copilot, use the sibling script:
