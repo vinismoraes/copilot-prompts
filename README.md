@@ -293,3 +293,9 @@ If a pack file has the same name as a core file (e.g. `pr-creation.instructions.
 ## License
 
 MIT — use it, fork it, adapt it to your own team's conventions.
+
+### Obsidian task completion
+
+With an Obsidian vault configured, all agents must record and verify task completion, including when workspace cleanup is skipped. The shared rules live in `instructions/personal/obsidian-journaling.instructions.md` and `instructions/core/task-workflow.instructions.md`. The companion [dev-workspace](https://github.com/vinismoraes/dev-workspace) repo owns `task-journal.py` and the task-script integration; pull it and run `./install.sh --no-shell-path` to install the writer. Python 3 is required.
+
+Claude and Copilot should install the `personal` instructions profile; Codex efficiency installs link the journaling and task-workflow guidance. Local regular instruction copies are skipped by installers: back up and replace those specific copies with source symlinks so future source updates reach every agent. Do not replace unrelated local agent configuration.

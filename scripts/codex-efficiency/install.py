@@ -1,13 +1,17 @@
 #!/usr/bin/env python3
 """Install Codex efficiency tools from the copilot-prompts repository."""
 import argparse
+import hashlib
 import shutil
 from datetime import datetime
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parent.parent
-GUIDANCE = ("git-push", "git-commits", "pr-comments", "go-standards")
+# Exact previous installer-managed override, before milestone verification.
+# Customized overrides must still be reviewed rather than overwritten.
+PREVIOUS_OVERRIDE_SHA256 = "73df5ba442238eaa21540e0eefc3d52104918a38b0cf6487ad32b1faf6b640dd"
+GUIDANCE = ("git-push", "git-commits", "pr-comments", "go-standards", "task-workflow")
 
 
 def backup(path):
@@ -25,7 +29,13 @@ def install(home, apply, report_only, codex_home=None, check=False):
         existing_override = codex_home / "AGENTS.override.md"
         general_source = HERE / "AGENTS.override.md"
         if existing_override.exists() or existing_override.is_symlink():
-            if not existing_override.is_file() or existing_override.read_bytes() != general_source.read_bytes():
+            managed_previous = (
+                existing_override.is_file()
+                and hashlib.sha256(existing_override.read_bytes()).hexdigest() == PREVIOUS_OVERRIDE_SHA256
+            )
+            if not existing_override.is_file() or (
+                existing_override.read_bytes() != general_source.read_bytes() and not managed_previous
+            ):
                 raise SystemExit(
                     "Default Codex home already has different global instructions. "
                     "Use --codex-home for a separate profile or review the existing override before replacing it."
@@ -57,6 +67,10 @@ def install(home, apply, report_only, codex_home=None, check=False):
              codex_home / "guidance" / f"{name}.instructions.md")
             for name in GUIDANCE
         ]
+        links.append((
+            REPO / "instructions/personal/obsidian-journaling.instructions.md",
+            codex_home / "guidance/obsidian-journaling.instructions.md",
+        ))
     missing = [str(source) for source, _ in copies + links if not source.is_file()]
     if missing:
         raise SystemExit("Missing kit source files: " + ", ".join(missing))
