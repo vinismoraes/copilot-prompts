@@ -10,6 +10,8 @@ Installed by `copilot-prompts/scripts/install.sh --codex-efficiency`. Keep any g
 - Before posting a PR comment, show the draft and wait for approval. Read `$CODEX_HOME/guidance/pr-comments.instructions.md` when relevant.
 - For Go implementation, read `$CODEX_HOME/guidance/go-standards.instructions.md`.
 
+- When an Obsidian vault is configured, load `$CODEX_HOME/guidance/obsidian-journaling.instructions.md` at task starts, commit proposals, design decisions, session wrap-ups, and task completion. Before reporting a task finished, verify its project status and linked daily completion entry, even when no cleanup script was used. Report journaling failures explicitly; do not silently skip them.
+
 ## Build only what the task needs
 
 For each task, use this scope check without adding a separate planning turn for routine work:

@@ -22,7 +22,7 @@ When the user says they are starting a new task or mentions a branch name (e.g. 
 ./new-task.sh my-feature repo-a repo-b
 ```
 
-4. This creates worktrees on a new branch, generates a `.code-workspace`, and opens VS Code with all repos as roots.
+4. This creates worktrees on a new branch, generates a `.code-workspace`, writes/verifies the Obsidian project note, and opens VS Code with all repos as roots. When skipping the workspace script, create/update and verify the project note using `task-journal.py start` if a vault is configured.
 5. Before starting, check for stale worktrees from previous tasks and offer to clean them up.
 
 *(Rationale: internal Week 1 study, July 2026, N=8 tickets, 25 Claude Code runs. Task-scoping produced +50–100pp first-attempt file coverage when the target repo was outside the user's default, and 0pp difference — dominated by ~27pp model non-determinism — for same-default-repo tickets. Full data: `~/GoProjects/studies/task-scoped-agent-context/runs/_summary.md`.)*
@@ -37,21 +37,18 @@ If the task expands to touch another repo:
 
 ## Finishing a task
 
-When the user says they're done with a task (regardless of PR status — PRs may be open, merged, or not created yet), offer to clean up:
-
-1. Run the cleanup script **first** (as a background terminal — the user will close the window after):
+When the user says they're done with a task (regardless of PR status), record and verify completion before giving the final response. This applies even when no task workspace was created or the user keeps it open. If an Obsidian vault is configured, load `obsidian-journaling.instructions.md` and run:
 
 ```bash
-./done-task.sh my-feature
+python3 "${REPOS_ROOT:-$HOME/GoProjects}/task-journal.py" finish my-feature --summary "One factual sentence about the outcome."
+python3 "${REPOS_ROOT:-$HOME/GoProjects}/task-journal.py" verify my-feature --completed
 ```
 
-2. Once cleanup succeeds, give the user a short send-off and tell them it's safe to close the window. Keep it human — something like:
+This sets the project note to `DONE` and adds a linked entry to today's daily note. Verify actual PR links separately; user-confirmed task completion alone does not establish merge or deployment status. If journaling fails, preserve the workspace and report the failure. If the helper is missing, use the safe manual journaling procedure and read back both notes.
 
-> All clean. You're good to close this window. ✌️
+Offer workspace cleanup separately when a workspace exists. If cleanup is requested, run `./done-task.sh my-feature`; it journals and verifies before removing worktrees and the workspace directory. Remote branches stay intact. Do not use cleanup merely to write notes, and do not repeat a completion entry already recorded for today.
 
-This removes the worktrees and workspace directory. Remote branches stay intact.
-
-**Important**: Run `done-task.sh` as a **background** terminal (`isBackground: true`) so it executes even if the user closes the window shortly after. Do NOT ask the user to close the window first — that kills the agent before cleanup can run.
+If the harness supports a background terminal, cleanup may use it, but wait for successful completion before saying it is safe to close the window.
 
 ## Absorbing latest `main` into an in-flight task
 
@@ -83,7 +80,7 @@ Repos live under `$REPOS_ROOT/`.
 - The `services` repo automatically gets `src/el` added as a second workspace root when present
 - Worktrees are created at `$REPOS_ROOT/worktrees/BRANCH/`
 - Main clones at `$REPOS_ROOT/` are never modified
-- When a task is done, run `done-task.sh` as a background terminal, then tell the user to close the window
+- When a task is done, record and verify its Obsidian completion; clean up the workspace only when requested
 - If you notice orphaned worktree windows (workspace files that no longer exist), close them immediately
 
 ## Quick starting a new repo

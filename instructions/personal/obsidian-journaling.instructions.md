@@ -5,11 +5,26 @@ description: Automatically log engineering activity to Obsidian vault at key mom
 
 # Obsidian Auto-Journaling
 
-Vault path: `~/ObsidianVault/`
+Vault path: `~/ObsidianVault/` (or `VAULT_ROOT` when configured).
+
+## Required milestone verification (all agents)
+
+Treat journaling as part of completing work. Apply this at task starts, commit proposals, design decisions, session wrap-ups, and task completion, even if no workspace script was used. A missing note is an unfinished journaling step; never silently claim it was saved.
+
+The shared writer is `task-journal.py`, installed by the companion `dev-workspace` repo into `${REPOS_ROOT:-$HOME/GoProjects}`. It requires Python 3. Use the actual task branch, not an unrelated checkout's branch. Pass `--date YYYY-MM-DD` using the user's local date when it differs from the machine date or when backfilling.
+
+- **Task start:** `python3 "${REPOS_ROOT:-$HOME/GoProjects}/task-journal.py" start BRANCH --title "Task description" --repo REPO`, then `verify BRANCH`. `new-task.sh` does this automatically; verify its result instead of writing a duplicate note.
+- **Task completion:** when the user says a task is finished, run `python3 "${REPOS_ROOT:-$HOME/GoProjects}/task-journal.py" finish BRANCH --summary "One factual sentence about the outcome."`, then `python3 "${REPOS_ROOT:-$HOME/GoProjects}/task-journal.py" verify BRANCH --completed`. This updates the existing project note to `DONE` and adds a linked daily entry, without deleting the workspace. Do this even when cleanup is declined or no task script was used. Completion does not imply PR merge or deployment; only record those when verified.
+- **Other milestones:** record decisions, findings, commit proposals, and session summaries using the safe-append procedure below. Read back the target section to verify the entry before reporting success. Ending a session does not mark an unfinished task `DONE`.
+- **Cleanup:** `done-task.sh` now writes and verifies completion before removing worktrees. A journaling failure must stop cleanup. Workspace removal remains a separate action; never run it just to create notes.
+- **Failure:** retry only after diagnosing the problem. If the writer is missing, install it from `dev-workspace` or use the safe manual procedure and verify both notes. Report permission, write, malformed-note, or ambiguous-match failures explicitly; do not report journaling complete while a failure remains.
+- **Preservation and retries:** preserve existing entries and unrelated sections. Search by ticket ID before creating a project note. Repeated completion of the same task on the same day must not duplicate entries. Do not rewrite a whole existing note or use a create operation as a repair fallback.
+
+Claude, Codex, and Copilot must use this same workflow. The scripts automate predictable status/activity updates; agents still capture the substance of decisions and summaries.
 
 ## When to write
 
-### 1. Task start (`new-task.sh` runs)
+### 1. Task start (with or without `new-task.sh`)
 - Check if `projects/<TICKET> *.md` exists in the vault
 - If not, create it using this skeleton:
 
@@ -88,10 +103,11 @@ GROUP BY file.link
   ```
 - Update project note **Status** if work is complete (change to `DONE`) or add latest PR links to `## Key PRs`
 
-### 5. Task finish (`done-task.sh` runs)
+### 5. Task finish (with or without `done-task.sh`)
 - Update project note **Status** to `DONE`
 - Append final PR links if not already there
-- Add a closing summary line under `## Context` if empty
+- Add a dated completion summary under `## Context`
+- Append a linked completion entry under today's daily `## Activity` and verify both notes
 
 ### 6. Staff-track plan awareness (`#staff-track` project notes)
 Project notes tagged `#staff-track` (e.g. `projects/Tech Lead Handoff 2H 2026.md`) contain phased plans with `- [ ]` checkboxes and dated **Phase gates**. Treat them as live plans, not static docs.
